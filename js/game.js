@@ -6,8 +6,8 @@ var platform,
 	presents,
 	score,
 	scoreText,
-	NUM_PRESENTS = 100,
-	MAX_SPEED = 100,
+	NUM_PRESENTS = 50,
+	MAX_SPEED = 200,
 	timer,
 	timerCount,
 	timerText,
@@ -27,7 +27,6 @@ loading.prototype = {
 		game.load.image('ground', 'img/ground.png');
 		game.load.spritesheet('dude', 'img/dude.png', 32, 48);
 		game.load.image('start_button', 'img/play_button.png');
-		console.log('assets loaded');
 	},
 	create: function(){
 		this.startButton = this.add.button(game.world.width/2 - 100, game.world.height/2 - 50, 'start_button', this.startGame, this); // x, y, spriteSheet, callback, callbackContext, overFrame, outFrame, downFrame
@@ -107,10 +106,7 @@ mainLoop.prototype = {
 		presents = game.add.group();
 		presents.enableBody = true;
 		for(var i = 0; i < NUM_PRESENTS; i++){
-			var present = presents.create(Math.random() * game.world.width, Math.random() * -5000, presentTypes[Math.floor(Math.random() * presentTypes.length)]);
-			present.index = i;
-			present.body.gravity.y = 20;
-			present.body.maxVelocity.setTo(MAX_SPEED, MAX_SPEED); //x, y
+			this.createRandomPresent();
 		}
 	},
 	update: function(){
@@ -135,15 +131,25 @@ mainLoop.prototype = {
 	},
 	missPresent: function(platform, present){
 		present.kill();
+		this.createRandomPresent();
 	},
 	collectPresent: function(player, present){
 		score += 10;
 		present.kill();
+		this.createRandomPresent();
+	},
+	createRandomPresent: function(){
+		this.createPresent(Math.random() * game.world.width, Math.random() * -10, presentTypes[Math.floor(Math.random() * presentTypes.length)], Math.random() * 100 + 200);
+	},
+	createPresent: function(x, y, presentType, gravity){
+		var present = presents.create(Math.random() * game.world.width, Math.random() * -5000, presentTypes[Math.floor(Math.random() * presentTypes.length)]);
+		present.body.gravity.y = gravity;
+		present.body.maxVelocity.setTo(0, MAX_SPEED); //x, y
 	}
 };
 
-var end =function(game){};
-end.prototype = {
+var finish =function(game){};
+finish.prototype = {
 	update: function(){
 
 	}
@@ -151,5 +157,6 @@ end.prototype = {
 
 game.state.add('loading', loading, true);
 game.state.add('mainLoop', mainLoop, true);
+game.state.add('finish', finish, true);
 
 game.state.start('loading');
