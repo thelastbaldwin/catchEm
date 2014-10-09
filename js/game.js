@@ -27,7 +27,8 @@ function create() {
 	//  We're going to be using physics, so enable the Arcade Physics system
     game.physics.startSystem(Phaser.Physics.ARCADE);
 	
-	game.add.sprite(0, 0, 'background');
+	var background = game.add.sprite(0, 0, 'background');
+	background.inputEnabled = true;
 
 	scoreText = game.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#fff' });
 
@@ -64,6 +65,14 @@ function create() {
 	//controls
 	cursors = game.input.keyboard.createCursorKeys();
 
+	// Capture certain keys to prevent their default actions in the browser.
+    // This is only necessary because this is an HTML5 game. Games on other
+    // platforms may not need code like this.
+	game.input.keyboard.addKeyCapture([
+		Phaser.Keyboard.LEFT,
+		Phaser.Keyboard.RIGHT
+	]);
+
 	//presents
 	presents = game.add.group();
 	presents.enableBody = true;
@@ -76,6 +85,9 @@ function create() {
 }
 
 function update() {
+	//update score
+	scoreText.text = "Score: " + score;
+
 	game.physics.arcade.collide(player, platform);
 	//game.physics.arcade.collide(presents, platform);
 
@@ -95,12 +107,12 @@ function update() {
 
 function missPresent(platform, present){
 	present.kill();
-	console.log(present.body, present.index);
+	// console.log(presents.countLiving());
 }
 
 function collectPresent(player, present){
-	//remove present from screen
+	score += 10;
 	present.kill();
 
-	console.log(present.body, present.index);
+	// console.log(present);
 }
