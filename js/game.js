@@ -4,10 +4,13 @@ var platform,
 	player,
 	cursors,
 	presents,
-	score = 0,
+	score,
 	scoreText,
 	NUM_PRESENTS = 100,
 	MAX_SPEED = 100,
+	timer,
+	timerCount,
+	timerText,
 	presentTypes = [
 	'red_gift',
 	'purple_gift',
@@ -40,19 +43,31 @@ loading.prototype = {
 var mainLoop = function(game){};
 mainLoop.prototype = {
 	create: function(){
-		 // We're going to be using physics, so enable the Arcade Physics system
+		// We're going to be using physics, so enable the Arcade Physics system
 		game.physics.startSystem(Phaser.Physics.ARCADE);
 		var background = game.add.sprite(0, 0, 'background');
 		background.inputEnabled = true;
 
-		scoreText = game.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#fff' });
+		timerCount = 60;
+		score = 0;
+		var fontStyle = { fontSize: '32px', fill: '#fff' };
+		scoreText = game.add.text(16, 16, 'Score: ' + score.toString(), fontStyle);
+		timerText = game.add.text(game.world.width-50, 16, timerCount.toString(), fontStyle);
+
+		timer = setInterval(function(){
+			timerCount--;
+			if(timerCount === 0){
+				game.state.start('loading');
+				clearInterval(timer);
+			}
+		}, 1000);
 
 		platform = game.add.group();
 		platform.enableBody = true;
 		var ground = platform.create(0, game.world.height-32, 'ground');
 		ground.body.immovable = true;
 
-		//player and settings
+		// player and settings
 		player = game.add.sprite(32, game.world.height - 150, 'dude');
 		game.physics.arcade.enable(player);
 
@@ -77,18 +92,18 @@ mainLoop.prototype = {
 			player.frame = 4;
 		};
 
-		// //controls
+		// controls
 		cursors = game.input.keyboard.createCursorKeys();
 
-		// // Capture certain keys to prevent their default actions in the browser.
-		// // This is only necessary because this is an HTML5 game. Games on other
-		// // platforms may not need code like 
+		// Capture certain keys to prevent their default actions in the browser.
+		// This is only necessary because this is an HTML5 game. Games on other
+		// platforms may not need code like 
 		game.input.keyboard.addKeyCapture([
 			Phaser.Keyboard.LEFT,
 			Phaser.Keyboard.RIGHT
 		]);
 
-		// //presents
+		// presents
 		presents = game.add.group();
 		presents.enableBody = true;
 		for(var i = 0; i < NUM_PRESENTS; i++){
@@ -101,9 +116,9 @@ mainLoop.prototype = {
 	update: function(){
 		//update score
 		scoreText.text = "Score: " + score;
+		timerText.text = timerCount.toString();
 
 		game.physics.arcade.collide(player, platform);
-		//game.physics.arcade.collide(presents, platform);
 
 		game.physics.arcade.overlap(platform, presents, this.missPresent, null, this);
 		game.physics.arcade.overlap(player, presents, this.collectPresent, null, this);
@@ -119,12 +134,18 @@ mainLoop.prototype = {
 		}
 	},
 	missPresent: function(platform, present){
-		console.log('missed!');
 		present.kill();
 	},
 	collectPresent: function(player, present){
 		score += 10;
 		present.kill();
+	}
+};
+
+var end =function(game){};
+end.prototype = {
+	update: function(){
+
 	}
 };
 
