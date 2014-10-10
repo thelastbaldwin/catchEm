@@ -1,9 +1,5 @@
 // TODO: work with designers to find out optimal size for the game
 // add a function to find out the game's scale relative to that
-
-var gameElem = document.querySelector('#game');
-var game = new Phaser.Game(gameElem.offsetWidth, gameElem.offsetWidth * 0.4, Phaser.AUTO, 'game', 'loading');
-
 var platform,
 	player,
 	cursors,
@@ -12,6 +8,9 @@ var platform,
 	scoreText,
 	NUM_PRESENTS = 50,
 	MAX_SPEED = 150,
+	GOLDEN_RATIO = 1.618,
+	BASE_WIDTH = 400,
+	BASE_HEIGHT = BASE_WIDTH/GOLDEN_RATIO,
 	timer,
 	timerCount,
 	timerText,
@@ -19,7 +18,9 @@ var platform,
 	'red_gift',
 	'purple_gift',
 	'blue_gift'
-	];
+	],gameElem = document.querySelector('#game'),
+	game = new Phaser.Game(gameElem.offsetWidth, gameElem.offsetWidth/GOLDEN_RATIO, Phaser.AUTO, 'game', 'loading');
+
 
 var loading = function(game){};
 loading.prototype = {
@@ -31,9 +32,12 @@ loading.prototype = {
 		game.load.image('ground', 'img/ground.png');
 		game.load.spritesheet('dude', 'img/dude.png', 32, 48);
 		game.load.image('start_button', 'img/play_button.png');
+
+		this.scale.scaleMode = Phaser.ScaleManager.RESIZE;
+		this.scale.refresh();
 	},
 	create: function(){
-		this.startButton = this.add.button(game.world.width/2 - 100, game.world.height/2 - 50, 'start_button', this.startGame, this); // x, y, spriteSheet, callback, callbackContext, overFrame, outFrame, downFrame
+		this.startButton = this.add.button(game.width/2 - 100, game.height/2 - 50, 'start_button', this.startGame, this); // x, y, spriteSheet, callback, callbackContext, overFrame, outFrame, downFrame
 	},
 	update: function(){
 
@@ -55,7 +59,7 @@ mainLoop.prototype = {
 		score = 0;
 		var fontStyle = { fontSize: '32px', fill: '#fff' };
 		scoreText = game.add.text(16, 16, 'Score: ' + score.toString(), fontStyle);
-		timerText = game.add.text(game.world.width-50, 16, timerCount.toString(), fontStyle);
+		timerText = game.add.text(game.width-50, 16, timerCount.toString(), fontStyle);
 
 		timer = setInterval(function(){
 			timerCount--;
@@ -67,11 +71,11 @@ mainLoop.prototype = {
 
 		platform = game.add.group();
 		platform.enableBody = true;
-		var ground = platform.create(0, game.world.height-32, 'ground');
+		var ground = platform.create(0, game.height-32, 'ground');
 		ground.body.immovable = true;
 
 		// player and settings
-		player = game.add.sprite(32, game.world.height - 150, 'dude');
+		player = game.add.sprite(32, game.height - 150, 'dude');
 		game.physics.arcade.enable(player);
 
 		player.body.bounce.y = 0.2;
@@ -143,10 +147,10 @@ mainLoop.prototype = {
 		this.createRandomPresent();
 	},
 	createRandomPresent: function(){
-		this.createPresent(Math.random() * game.world.width, Math.random() * -10, presentTypes[Math.floor(Math.random() * presentTypes.length)], Math.random() * 100 + 200);
+		this.createPresent(Math.random() * game.width, Math.random() * -10, presentTypes[Math.floor(Math.random() * presentTypes.length)], Math.random() * 100 + 200);
 	},
 	createPresent: function(x, y, presentType, gravity){
-		var present = presents.create(Math.random() * game.world.width, Math.random() * -5000, presentTypes[Math.floor(Math.random() * presentTypes.length)]);
+		var present = presents.create(Math.random() * game.width, Math.random() * -5000, presentTypes[Math.floor(Math.random() * presentTypes.length)]);
 		present.body.gravity.y = gravity;
 		present.body.maxVelocity.setTo(0, MAX_SPEED); //x, y
 	},
@@ -154,19 +158,19 @@ mainLoop.prototype = {
 		var isActive = false;
 
 		isActive = game.input.keyboard.isDown(Phaser.Keyboard.LEFT);
-    	isActive |= (game.input.activePointer.isDown &&
-        this.game.input.activePointer.x < (player.body.x - (player.texture.width * player.scale.x)/2));
+		isActive |= (game.input.activePointer.isDown &&
+		this.game.input.activePointer.x + 5 < (player.body.x + (player.texture.width)/2));
 
-    	return isActive;
+		return isActive;
 	},
 	isRightActive: function(){
 		var isActive = false;
 
 		isActive = game.input.keyboard.isDown(Phaser.Keyboard.RIGHT);
-    	isActive |= (game.input.activePointer.isDown &&
-        game.input.activePointer.x > (player.body.x + (player.texture.width * player.scale.x)/2));
+		isActive |= (game.input.activePointer.isDown &&
+		game.input.activePointer.x - 5 > (player.body.x + (player.texture.width)/2));
 
-    	return isActive;
+		return isActive;
 	}
 };
 
