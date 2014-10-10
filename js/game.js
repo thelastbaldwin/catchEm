@@ -1,4 +1,8 @@
-var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', 'loading');
+// TODO: work with designers to find out optimal size for the game
+// add a function to find out the game's scale relative to that
+
+var gameElem = document.querySelector('#game');
+var game = new Phaser.Game(gameElem.offsetWidth, gameElem.offsetWidth * 0.4, Phaser.AUTO, 'game', 'loading');
 
 var platform,
 	player,
@@ -7,7 +11,7 @@ var platform,
 	score,
 	scoreText,
 	NUM_PRESENTS = 50,
-	MAX_SPEED = 200,
+	MAX_SPEED = 150,
 	timer,
 	timerCount,
 	timerText,
@@ -68,6 +72,7 @@ mainLoop.prototype = {
 
 		// player and settings
 		player = game.add.sprite(32, game.world.height - 150, 'dude');
+		console.log(player);
 		game.physics.arcade.enable(player);
 
 		player.body.bounce.y = 0.2;
@@ -121,9 +126,9 @@ mainLoop.prototype = {
 
 		player.body.velocity.x = 0;
 
-		if (cursors.left.isDown){
+		if (this.isLeftActive()){
 			player.moveLeft();
-		} else if (cursors.right.isDown){
+		} else if (this.isRightActive()){
 			player.moveRight();
 		} else {
 			player.stop();
@@ -145,6 +150,24 @@ mainLoop.prototype = {
 		var present = presents.create(Math.random() * game.world.width, Math.random() * -5000, presentTypes[Math.floor(Math.random() * presentTypes.length)]);
 		present.body.gravity.y = gravity;
 		present.body.maxVelocity.setTo(0, MAX_SPEED); //x, y
+	},
+	isLeftActive: function(){
+		var isActive = false;
+
+		isActive = game.input.keyboard.isDown(Phaser.Keyboard.LEFT);
+    	isActive |= (game.input.activePointer.isDown &&
+        this.game.input.activePointer.x < (player.body.x - (player.texture.width * player.scale.x)/2));
+
+    	return isActive;
+	},
+	isRightActive: function(){
+		var isActive = false;
+
+		isActive = game.input.keyboard.isDown(Phaser.Keyboard.RIGHT);
+    	isActive |= (game.input.activePointer.isDown &&
+        game.input.activePointer.x > (player.body.x + (player.texture.width * player.scale.x)/2));
+
+    	return isActive;
 	}
 };
 
