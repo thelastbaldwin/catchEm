@@ -19,7 +19,7 @@ var platform,
 	'purple_gift',
 	'blue_gift'
 	],gameElem = document.querySelector('#game'),
-	game = new Phaser.Game(gameElem.offsetWidth, gameElem.offsetWidth/GOLDEN_RATIO, Phaser.AUTO, 'game', 'loading');
+	game = new Phaser.Game(400, 247, Phaser.AUTO, 'game', 'loading', true, false);
 
 
 var loading = function(game){};
@@ -33,8 +33,15 @@ loading.prototype = {
 		game.load.spritesheet('dude', 'img/dude.png', 32, 48);
 		game.load.image('start_button', 'img/play_button.png');
 
-		this.scale.scaleMode = Phaser.ScaleManager.RESIZE;
-		this.scale.refresh();
+		//this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+		//this.scale.setMinMax(400, 247, 1172, 724);
+		this.scale.minWidth = 400;
+		this.scale.minHeight = 400/GOLDEN_RATIO;
+		this.scale.maxWidth = 1172;
+		this.scale.maxHeight = 1172/GOLDEN_RATIO;
+		this.scale.setScreenSize(true);
+		this.scale.startFullScreen(false);
+		console.log(this.scale);
 	},
 	create: function(){
 		this.startButton = this.add.button(game.width/2 - 100, game.height/2 - 50, 'start_button', this.startGame, this); // x, y, spriteSheet, callback, callbackContext, overFrame, outFrame, downFrame
@@ -71,7 +78,7 @@ mainLoop.prototype = {
 
 		platform = game.add.group();
 		platform.enableBody = true;
-		var ground = platform.create(0, game.height-32, 'ground');
+		var ground = platform.create(0, game.height-16, 'ground');
 		ground.body.immovable = true;
 
 		// player and settings
@@ -150,7 +157,7 @@ mainLoop.prototype = {
 		this.createPresent(Math.random() * game.width, Math.random() * -10, presentTypes[Math.floor(Math.random() * presentTypes.length)], Math.random() * 100 + 200);
 	},
 	createPresent: function(x, y, presentType, gravity){
-		var present = presents.create(Math.random() * game.width, Math.random() * -5000, presentTypes[Math.floor(Math.random() * presentTypes.length)]);
+		var present = presents.create(Math.random() * (game.width - 20) + 20, Math.random() * -5000, presentTypes[Math.floor(Math.random() * presentTypes.length)]);
 		present.body.gravity.y = gravity;
 		present.body.maxVelocity.setTo(0, MAX_SPEED); //x, y
 	},
