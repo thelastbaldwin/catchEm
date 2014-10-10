@@ -72,7 +72,6 @@ mainLoop.prototype = {
 
 		// player and settings
 		player = game.add.sprite(32, game.world.height - 150, 'dude');
-		console.log(player);
 		game.physics.arcade.enable(player);
 
 		player.body.bounce.y = 0.2;
