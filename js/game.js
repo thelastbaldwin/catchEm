@@ -6,7 +6,7 @@ var platform,
 	presents,
 	score,
 	scoreText,
-	NUM_PRESENTS = 50,
+	NUM_PRESENTS = 12,
 	MAX_SPEED = 150,
 	GOLDEN_RATIO = 1.618,
 	BASE_WIDTH = 400,
@@ -19,7 +19,7 @@ var platform,
 	'purple_gift',
 	'blue_gift'
 	],gameElem = document.querySelector('#game'),
-	game = new Phaser.Game(BASE_WIDTH, BASE_HEIGHT, Phaser.AUTO, 'game', 'loading', true, false);
+	game = new Phaser.Game(BASE_WIDTH, BASE_HEIGHT, Phaser.AUTO, 'game', 'loading', false, false);
 
 
 var loading = function(game){};
@@ -34,9 +34,7 @@ loading.prototype = {
 		game.load.image('start_button', 'img/play_button.png');
 
 		game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-		game.scale.minWidth = 400;
-		game.scale.minHeight = game.scale.minWidth/GOLDEN_RATIO;
-		game.scale.maxWidth = 800;
+		game.scale.maxWidth = BASE_WIDTH * 2;
 		game.scale.maxHeight = game.scale.maxWidth/GOLDEN_RATIO;
 		this.game.scale.setScreenSize(true);
 	},
@@ -156,19 +154,21 @@ mainLoop.prototype = {
 		this.createRandomPresent();
 	},
 	createRandomPresent: function(){
-		this.createPresent(Math.random() * game.width, Math.random() * -10, presentTypes[Math.floor(Math.random() * presentTypes.length)], Math.random() * 100 + 200);
+		var present = this.createPresent(0, Math.random() * -1000);
+		//we don't know the width of the present until it's constructed, so adjust after that 
+		present.x = Math.random() * (game.width - present.width);
 	},
-	createPresent: function(x, y, presentType, gravity){
-		var present = presents.create(Math.random() * (game.width - 20) + 20, Math.random() * -5000, presentTypes[Math.floor(Math.random() * presentTypes.length)]);
-		present.body.gravity.y = gravity;
+	createPresent: function(x, y){
+		var present = presents.create(x, y, presentTypes[Math.floor(Math.random() * presentTypes.length)]);
+		present.body.gravity.y = 100;
 		present.body.maxVelocity.setTo(0, MAX_SPEED); //x, y
+		return present;
 	},
 	isLeftActive: function(){
 		var isActive = false;
 
 		isActive = game.input.keyboard.isDown(Phaser.Keyboard.LEFT);
-		isActive |= (game.input.activePointer.isDown &&
-		this.game.input.activePointer.x + 5 < (player.body.x + (player.texture.width)/2));
+		isActive |= this.game.input.activePointer.x + 5 < (player.body.x + (player.texture.width)/2);
 
 		return isActive;
 	},
@@ -176,8 +176,7 @@ mainLoop.prototype = {
 		var isActive = false;
 
 		isActive = game.input.keyboard.isDown(Phaser.Keyboard.RIGHT);
-		isActive |= (game.input.activePointer.isDown &&
-		game.input.activePointer.x - 5 > (player.body.x + (player.texture.width)/2));
+		isActive |= game.input.activePointer.x - 5 > (player.body.x + (player.texture.width)/2);
 
 		return isActive;
 	}
