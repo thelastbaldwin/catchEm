@@ -19,7 +19,9 @@ var platform,
 	'purple_gift',
 	'blue_gift'
 	],gameElem = document.querySelector('#game'),
-	game = new Phaser.Game(400, 247, Phaser.AUTO, 'game', 'loading', true, false);
+	// game = new Phaser.Game(BASE_WIDTH, BASE_HEIGHT, Phaser.AUTO, 'game', 'loading', true, false);
+	// game = new Phaser.Game(gameElem.offsetWidth, Math.floor(gameElem.offsetWidth/GOLDEN_RATIO), Phaser.AUTO, 'game', 'loading', true, false);
+	game = new Phaser.Game(BASE_WIDTH, BASE_HEIGHT, Phaser.AUTO, 'game', 'loading', true, false);
 
 
 var loading = function(game){};
@@ -33,24 +35,22 @@ loading.prototype = {
 		game.load.spritesheet('dude', 'img/dude.png', 32, 48);
 		game.load.image('start_button', 'img/play_button.png');
 
-		//this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-		//this.scale.setMinMax(400, 247, 1172, 724);
-		this.scale.minWidth = 400;
-		this.scale.minHeight = 400/GOLDEN_RATIO;
-		this.scale.maxWidth = 1172;
-		this.scale.maxHeight = 1172/GOLDEN_RATIO;
-		this.scale.setScreenSize(true);
-		this.scale.startFullScreen(false);
-		console.log(this.scale);
+		game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+		// this.world.scale.setTo(gameElem.offsetWidth/BASE_WIDTH, gameElem.offsetHeight/BASE_HEIGHT);
+		//this.world.scale.setTo(1.0, 1.0);
+		this.game.scale.setScreenSize(true);
+		// console.log(this.world);
 	},
 	create: function(){
-		this.startButton = this.add.button(game.width/2 - 100, game.height/2 - 50, 'start_button', this.startGame, this); // x, y, spriteSheet, callback, callbackContext, overFrame, outFrame, downFrame
+		this.startButton = this.add.button(this.game.world.centerX,this.game.world.centerY, 'start_button', this.startGame, this); // x, y, spriteSheet, callback, callbackContext, overFrame, outFrame, downFrame
+		this.startButton.anchor.setTo(0.5, 0.5);
+		// console.log(this.world.width, this.world.height, this.game.width, this.game.height);
 	},
 	update: function(){
 
 	},
 	startGame: function(){
-		game.state.start('mainLoop');
+		this.game.state.start('mainLoop');
 	}
 };
 
@@ -58,7 +58,7 @@ var mainLoop = function(game){};
 mainLoop.prototype = {
 	create: function(){
 		// We're going to be using physics, so enable the Arcade Physics system
-		game.physics.startSystem(Phaser.Physics.ARCADE);
+		this.game.physics.startSystem(Phaser.Physics.ARCADE);
 		var background = game.add.sprite(0, 0, 'background');
 		background.inputEnabled = true;
 
@@ -71,19 +71,21 @@ mainLoop.prototype = {
 		timer = setInterval(function(){
 			timerCount--;
 			if(timerCount === 0){
-				game.state.start('loading');
+				this.game.state.start('loading');
 				clearInterval(timer);
 			}
 		}, 1000);
 
-		platform = game.add.group();
+		platform = this.game.add.group();
 		platform.enableBody = true;
-		var ground = platform.create(0, game.height-16, 'ground');
+		var ground = platform.create(0, this.game.height, 'ground');
+		ground.anchor.setTo(0, 1.0);
 		ground.body.immovable = true;
 
 		// player and settings
-		player = game.add.sprite(32, game.height - 150, 'dude');
-		game.physics.arcade.enable(player);
+		player = this.game.add.sprite(this.game.world.centerX, 0.75 * this.game.world.height, 'dude');
+		player.anchor.setTo(0.5, 0.5);
+		this.game.physics.arcade.enable(player);
 
 		player.body.bounce.y = 0.2;
 		player.body.gravity.y = 300;
@@ -107,12 +109,12 @@ mainLoop.prototype = {
 		};
 
 		// controls
-		cursors = game.input.keyboard.createCursorKeys();
+		cursors = this.game.input.keyboard.createCursorKeys();
 
 		// Capture certain keys to prevent their default actions in the browser.
 		// This is only necessary because this is an HTML5 game. Games on other
 		// platforms may not need code like 
-		game.input.keyboard.addKeyCapture([
+		this.game.input.keyboard.addKeyCapture([
 			Phaser.Keyboard.LEFT,
 			Phaser.Keyboard.RIGHT
 		]);
