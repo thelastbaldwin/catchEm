@@ -19,8 +19,6 @@ var platform,
 	'purple_gift',
 	'blue_gift'
 	],gameElem = document.querySelector('#game'),
-	// game = new Phaser.Game(BASE_WIDTH, BASE_HEIGHT, Phaser.AUTO, 'game', 'loading', true, false);
-	// game = new Phaser.Game(gameElem.offsetWidth, Math.floor(gameElem.offsetWidth/GOLDEN_RATIO), Phaser.AUTO, 'game', 'loading', true, false);
 	game = new Phaser.Game(BASE_WIDTH, BASE_HEIGHT, Phaser.AUTO, 'game', 'loading', true, false);
 
 
@@ -36,10 +34,11 @@ loading.prototype = {
 		game.load.image('start_button', 'img/play_button.png');
 
 		game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-		// this.world.scale.setTo(gameElem.offsetWidth/BASE_WIDTH, gameElem.offsetHeight/BASE_HEIGHT);
-		//this.world.scale.setTo(1.0, 1.0);
+		game.scale.minWidth = 400;
+		game.scale.minHeight = game.scale.minWidth/GOLDEN_RATIO;
+		game.scale.maxWidth = 800;
+		game.scale.maxHeight = game.scale.maxWidth/GOLDEN_RATIO;
 		this.game.scale.setScreenSize(true);
-		// console.log(this.world);
 	},
 	create: function(){
 		this.startButton = this.add.button(this.game.world.centerX,this.game.world.centerY, 'start_button', this.startGame, this); // x, y, spriteSheet, callback, callbackContext, overFrame, outFrame, downFrame
@@ -59,14 +58,15 @@ mainLoop.prototype = {
 	create: function(){
 		// We're going to be using physics, so enable the Arcade Physics system
 		this.game.physics.startSystem(Phaser.Physics.ARCADE);
-		var background = game.add.sprite(0, 0, 'background');
+		var background = this.game.add.sprite(0, 0, 'background');
 		background.inputEnabled = true;
 
 		timerCount = 60;
 		score = 0;
 		var fontStyle = { fontSize: '32px', fill: '#fff' };
 		scoreText = game.add.text(16, 16, 'Score: ' + score.toString(), fontStyle);
-		timerText = game.add.text(game.width-50, 16, timerCount.toString(), fontStyle);
+		timerText = game.add.text(this.game.width-16, 16, timerCount.toString(), fontStyle);
+		timerText.anchor.setTo(1.0, 0);
 
 		timer = setInterval(function(){
 			timerCount--;
