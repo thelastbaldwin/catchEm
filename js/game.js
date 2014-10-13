@@ -117,6 +117,11 @@ mainLoop.prototype = {
 			Phaser.Keyboard.RIGHT
 		]);
 
+		this.game.input.onDown.add(function(){
+			console.log(this.input.activePointer.x, this.input.activePointer.y);
+		}, this);
+
+
 		// presents
 		presents = game.add.group();
 		presents.enableBody = true;
@@ -168,15 +173,15 @@ mainLoop.prototype = {
 		var isActive = false;
 
 		isActive = game.input.keyboard.isDown(Phaser.Keyboard.LEFT);
-		isActive |= this.game.input.activePointer.x + 5 < (player.body.x + (player.texture.width)/2);
+		isActive |= this.game.input.activePointer.isDown && this.game.input.activePointer.x + 5 < (player.body.x + (player.texture.width)/2);
 
 		return isActive;
 	},
 	isRightActive: function(){
 		var isActive = false;
 
-		isActive = game.input.keyboard.isDown(Phaser.Keyboard.RIGHT);
-		isActive |= game.input.activePointer.x - 5 > (player.body.x + (player.texture.width)/2);
+		isActive = this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT);
+		isActive |= this.game.input.activePointer.isDown && game.input.activePointer.x - 5 > (player.body.x + (player.texture.width)/2);
 
 		return isActive;
 	}
