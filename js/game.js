@@ -1,6 +1,7 @@
 var myGame = {};
 
 myGame.NUM_PRESENTS = 12;
+myGame.NUM_COAL = 3;
 myGame.MAX_SPEED = 150;
 myGame.GOLDEN_RATIO = 1.618;
 myGame.BASE_WIDTH = 400;
@@ -14,6 +15,7 @@ myGame.loading.prototype = {
 		this.game.load.image('red_gift', 'img/present_1.png');
 		this.game.load.image('purple_gift', 'img/present_2.png');
 		this.game.load.image('blue_gift', 'img/present_3.png');
+		this.game.load.image('black_gift', 'img/present_4.png');
 		this.game.load.image('ground', 'img/ground.png');
 		this.game.load.spritesheet('dude', 'img/dude.png', 32, 48);
 		this.game.load.image('start_button', 'img/play_button.png');
@@ -103,6 +105,13 @@ myGame.mainLoop.prototype = {
 		for(var i = 0; i < myGame.NUM_PRESENTS; i++){
 			this.createRandomPresent();
 		}
+
+		// bad presents
+		this.coal = this.game.add.group();
+		this.coal.enableBody = true;
+		for(i = 0; i < myGame.NUM_COAL; i++){
+			this.createRandomCoal();
+		}
 	},
 	update: function(){
 		//update score
@@ -113,6 +122,8 @@ myGame.mainLoop.prototype = {
 
 		this.game.physics.arcade.overlap(this.platform, this.presents, this.missPresent, null, this);
 		this.game.physics.arcade.overlap(this.player, this.presents, this.collectPresent, null, this);
+		this.game.physics.arcade.overlap(this.platform, this.coal, this.missCoal, null, this);
+		this.game.physics.arcade.overlap(this.player, this.coal, this.collectCoal, null, this);
 
 		this.player.body.velocity.x = 0;
 
@@ -128,12 +139,29 @@ myGame.mainLoop.prototype = {
 		present.kill();
 		this.createRandomPresent();
 	},
+	missCoal: function(platform, coal){
+		coal.kill();
+		this.createRandomCoal();
+	},
 	collectPresent: function(player, present){
 		myGame.score += 10;
 		present.kill();
 		this.createRandomPresent();
 	},
-	createRandomPresent: function(){
+	collectCoal: function(player, coal){
+		myGame.score -= 10;
+		this.constrainScore();
+		coal.kill();
+		this.createRandomCoal();
+	},
+	createRandomCoal: function(){
+		var coal = this.coal.create(0, Math.random() * -1000, 'black_gift');
+		console.log(coal);
+		coal.body.gravity.y = 100;
+		coal.body.maxVelocity.setTo(0, myGame.MAX_SPEED);
+		coal.x = Math.random() * (this.game.width - coal.width);
+	},
+	createRandomPresent: function(type){
 		var present = this.createPresent(0, Math.random() * -1000);
 		//we don't know the width of the present until it's constructed, so adjust after that 
 		present.x = Math.random() * (this.game.width - present.width);
@@ -143,6 +171,11 @@ myGame.mainLoop.prototype = {
 		present.body.gravity.y = 100;
 		present.body.maxVelocity.setTo(0, myGame.MAX_SPEED); //x, y
 		return present;
+	},
+	constrainScore: function(){
+		if (myGame.score <= 0){
+			myGame.score = 0;
+		}
 	},
 	isLeftActive: function(){
 		var threshold = 5;
