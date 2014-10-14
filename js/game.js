@@ -5,6 +5,7 @@ myGame.MAX_SPEED = 150;
 myGame.GOLDEN_RATIO = 1.618;
 myGame.BASE_WIDTH = 400;
 myGame.BASE_HEIGHT = myGame.BASE_WIDTH/myGame.GOLDEN_RATIO;
+myGame.score = 0;
 
 myGame.loading = function(game){};
 myGame.loading.prototype = {
@@ -27,9 +28,6 @@ myGame.loading.prototype = {
 		this.startButton = this.add.button(this.game.world.centerX, this.game.world.centerY, 'start_button', this.startGame, this);
 		this.startButton.anchor.setTo(0.5, 0.5);
 	},
-	update: function(){
-
-	},
 	startGame: function(){
 		this.game.state.start('mainLoop');
 	}
@@ -51,9 +49,9 @@ myGame.mainLoop.prototype = {
 		background.inputEnabled = true;
 
 		this.timerCount = 60;
-		this.score = 0;
+		myGame.score = 0;
 		var fontStyle = { fontSize: '32px', fill: '#fff' };
-		this.scoreText = this.game.add.text(16, 16, 'Score: ' + this.score.toString(), fontStyle);
+		this.scoreText = this.game.add.text(16, 16, 'Score: ' + myGame.score.toString(), fontStyle);
 		this.timerText = this.game.add.text(this.game.width-16, 16, this.timerCount.toString(), fontStyle);
 		this.timerText.anchor.setTo(1.0, 0);
 
@@ -61,7 +59,7 @@ myGame.mainLoop.prototype = {
 		var interval = this.timer.loop(1000, function(){
 			this.timerCount--;
 			if(this.timerCount === 0){
-				this.state.start('loading');
+				this.game.state.start('finish');
 				this.timer.destroy();
 			}
 		}, this);
@@ -99,23 +97,6 @@ myGame.mainLoop.prototype = {
 			this.frame = 4;
 		};
 
-		// controls
-		this.cursors = this.game.input.keyboard.createCursorKeys();
-
-		// Capture certain keys to prevent their default actions in the browser.
-		// This is only necessary because this is an HTML5 game. Games on other
-		// platforms may not need code like 
-		this.game.input.keyboard.addKeyCapture([
-			Phaser.Keyboard.LEFT,
-			Phaser.Keyboard.RIGHT
-		]);
-
-		this.game.input.onDown.add(function(){
-			//console.log('pointer', this.input.activePointer.x, this.input.activePointer.y);
-			//console.log('player', player.body.x, player.body.y);
-		}, this);
-
-
 		// presents
 		this.presents = this.game.add.group();
 		this.presents.enableBody = true;
@@ -125,7 +106,7 @@ myGame.mainLoop.prototype = {
 	},
 	update: function(){
 		//update score
-		this.scoreText.text = "Score: " + this.score;
+		this.scoreText.text = "Score: " + myGame.score;
 		this.timerText.text = this.timerCount.toString();
 
 		this.game.physics.arcade.collide(this.player, this.platform);
@@ -148,7 +129,7 @@ myGame.mainLoop.prototype = {
 		this.createRandomPresent();
 	},
 	collectPresent: function(player, present){
-		this.score += 10;
+		myGame.score += 10;
 		present.kill();
 		this.createRandomPresent();
 	},
@@ -164,31 +145,37 @@ myGame.mainLoop.prototype = {
 		return present;
 	},
 	isLeftActive: function(){
-		var isActive = false;
-
-		isActive = this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT);
-		isActive |= this.game.input.activePointer.isDown && this.game.input.activePointer.x + 5 < this.player.x;
-
-		return isActive;
+		var threshold = 5;
+		return this.game.input.activePointer.x + threshold < this.player.x;
 	},
 	isRightActive: function(){
-		var isActive = false;
-
-		isActive = this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT);
-		isActive |= this.game.input.activePointer.isDown && this.game.input.activePointer.x - 5 > this.player.x;
-
-		return isActive;
+		var threshold = 5;
+		return this.game.input.activePointer.x - threshold > this.player.x;
 	}
 };
 
-var finish =function(game){};
-finish.prototype = {
-	update: function(){
-
+myGame.finish =function(game){};
+myGame.finish.prototype = {
+	preload: function(){
+		this.congratulations = [
+			'You are the kwisatz haderach of shopping',
+			'Is it the shoes?!',
+			'You\'re a consumer legend!',
+			'Leave some gifts for the other folks!',
+			'You have a monopoly on the holidays'
+		];
+	},
+	create: function(){
+		var fontStyle = { fontSize: '24px', fill: '#fff', align: 'center', wordWrap: true, wordWrapWidth: this.game.width/2 };
+		var expression = this.congratulations[Math.floor(Math.random() * this.congratulations.length)];
+		this.congratulationsText = this.game.add.text(this.game.world.centerX, this.game.world.centerY * 0.5, expression, fontStyle);
+		this.congratulationsText.anchor.setTo(0.5, 0.5);
+		this.startButton = this.add.button(this.game.world.centerX, this.game.world.centerY * 1.5, 'start_button', myGame.loading.prototype.startGame, this);
+		this.startButton.anchor.setTo(0.5, 0.5);
 	}
 };
 
-myGame.game = new Phaser.Game(myGame.BASE_WIDTH, myGame.BASE_HEIGHT, Phaser.AUTO, 'game', 'loading', false, false);
+myGame.game = new Phaser.Game(myGame.BASE_WIDTH, myGame.BASE_HEIGHT, Phaser.CANVAS, 'game', 'loading', false, false);
 
 myGame.game.state.add('loading', myGame.loading, true);
 myGame.game.state.add('mainLoop', myGame.mainLoop, true);
