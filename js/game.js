@@ -1,29 +1,13 @@
-// TODO: work with designers to find out optimal size for the game
-// add a function to find out the game's scale relative to that
-var platform,
-	player,
-	cursors,
-	presents,
-	score,
-	scoreText,
-	NUM_PRESENTS = 12,
-	MAX_SPEED = 150,
-	GOLDEN_RATIO = 1.618,
-	BASE_WIDTH = 400,
-	BASE_HEIGHT = BASE_WIDTH/GOLDEN_RATIO,
-	timer,
-	timerCount,
-	timerText,
-	presentTypes = [
-	'red_gift',
-	'purple_gift',
-	'blue_gift'
-	],gameElem = document.querySelector('#game'),
-	game = new Phaser.Game(BASE_WIDTH, BASE_HEIGHT, Phaser.AUTO, 'game', 'loading', false, false);
+var myGame = {};
 
+myGame.NUM_PRESENTS = 12;
+myGame.MAX_SPEED = 150;
+myGame.GOLDEN_RATIO = 1.618;
+myGame.BASE_WIDTH = 400;
+myGame.BASE_HEIGHT = myGame.BASE_WIDTH/myGame.GOLDEN_RATIO;
 
-var loading = function(game){};
-loading.prototype = {
+myGame.loading = function(game){};
+myGame.loading.prototype = {
 	preload: function(){
 		game.load.image('background', 'img/background.png');
 		game.load.image('red_gift', 'img/present_1.png');
@@ -34,120 +18,129 @@ loading.prototype = {
 		game.load.image('start_button', 'img/play_button.png');
 
 		game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-		game.scale.maxWidth = BASE_WIDTH * 2;
-		game.scale.maxHeight = game.scale.maxWidth/GOLDEN_RATIO;
-		this.game.scale.setScreenSize(true);
+		game.scale.maxWidth = myGame.BASE_WIDTH * 2;
+		game.scale.maxHeight = game.scale.maxWidth/myGame.GOLDEN_RATIO;
+		game.scale.setScreenSize(true);
 	},
 	create: function(){
 		// x, y, spriteSheet, callback, callbackContext, overFrame, outFrame, downFrame
-		this.startButton = this.add.button(this.game.world.centerX,this.game.world.centerY, 'start_button', this.startGame, this);
+		this.startButton = this.add.button(game.world.centerX,game.world.centerY, 'start_button', this.startGame, this);
 		this.startButton.anchor.setTo(0.5, 0.5);
 	},
 	update: function(){
 
 	},
 	startGame: function(){
-		this.game.state.start('mainLoop');
+		game.state.start('mainLoop');
 	}
 };
 
-var mainLoop = function(game){};
-mainLoop.prototype = {
+myGame.mainLoop = function(game){};
+myGame.mainLoop.prototype = {
+	preload: function(){
+		this.presentTypes = [
+		'red_gift',
+		'purple_gift',
+		'blue_gift'
+		];
+	},
 	create: function(){
 		// We're going to be using physics, so enable the Arcade Physics system
-		this.game.physics.startSystem(Phaser.Physics.ARCADE);
-		var background = this.game.add.sprite(0, 0, 'background');
+		game.physics.startSystem(Phaser.Physics.ARCADE);
+		var background = game.add.sprite(0, 0, 'background');
 		background.inputEnabled = true;
 
-		timerCount = 60;
-		score = 0;
+		this.timerCount = 60;
+		this.score = 0;
 		var fontStyle = { fontSize: '32px', fill: '#fff' };
-		scoreText = game.add.text(16, 16, 'Score: ' + score.toString(), fontStyle);
-		timerText = game.add.text(this.game.width-16, 16, timerCount.toString(), fontStyle);
-		timerText.anchor.setTo(1.0, 0);
+		this.scoreText = game.add.text(16, 16, 'Score: ' + this.score.toString(), fontStyle);
+		this.timerText = game.add.text(game.width-16, 16, this.timerCount.toString(), fontStyle);
+		this.timerText.anchor.setTo(1.0, 0);
 
-		timer = setInterval(function(){
-			timerCount--;
-			if(timerCount === 0){
-				this.game.state.start('loading');
-				clearInterval(timer);
+		this.timer = game.time.create(false);
+		var interval = this.timer.loop(1000, function(){
+			this.timerCount--;
+			if(this.timerCount === 0){
+				this.state.start('loading');
+				this.timer.destroy();
 			}
-		}, 1000);
+		}, this);
+		this.timer.start();
 
-		platform = this.game.add.group();
-		platform.enableBody = true;
-		var ground = platform.create(0, this.game.height, 'ground');
+		this.platform = game.add.group();
+		this.platform.enableBody = true;
+		var ground = this.platform.create(0, game.height, 'ground');
 		ground.anchor.setTo(0, 1.0);
 		ground.body.immovable = true;
 
 		// player and settings
-		player = this.game.add.sprite(this.game.world.centerX, 0.75 * this.game.world.height, 'dude');
-		player.anchor.setTo(0.5, 0.5);
-		this.game.physics.arcade.enable(player);
+		this.player = game.add.sprite(game.world.centerX, 0.75 * game.world.height, 'dude');
+		this.player.anchor.setTo(0.5, 0.5);
+		game.physics.arcade.enable(this.player);
 
-		player.body.bounce.y = 0.2;
-		player.body.gravity.y = 300;
-		player.body.collideWorldBounds = true;
+		this.player.body.bounce.y = 0.2;
+		this.player.body.gravity.y = 300;
+		this.player.body.collideWorldBounds = true;
 
-		player.animations.add('left', [0, 1, 2, 3], 10, true);
-		player.animations.add('right', [5, 6, 7, 8], 10, true);
+		this.player.animations.add('left', [0, 1, 2, 3], 10, true);
+		this.player.animations.add('right', [5, 6, 7, 8], 10, true);
 
-		player.moveLeft = function(){
-			player.body.velocity.x = -200;
-			player.animations.play('left');
+		this.player.moveLeft = function(){
+			this.body.velocity.x = -200;
+			this.animations.play('left');
 		};
 
-		player.moveRight = function(){
-			player.body.velocity.x = 200;
-			player.animations.play('right');
+		this.player.moveRight = function(){
+			this.body.velocity.x = 200;
+			this.animations.play('right');
 		};
-		player.stop = function(){
-			player.animations.stop();
-			player.frame = 4;
+		this.player.stop = function(){
+			this.animations.stop();
+			this.frame = 4;
 		};
 
 		// controls
-		cursors = this.game.input.keyboard.createCursorKeys();
+		this.cursors = game.input.keyboard.createCursorKeys();
 
 		// Capture certain keys to prevent their default actions in the browser.
 		// This is only necessary because this is an HTML5 game. Games on other
 		// platforms may not need code like 
-		this.game.input.keyboard.addKeyCapture([
+		game.input.keyboard.addKeyCapture([
 			Phaser.Keyboard.LEFT,
 			Phaser.Keyboard.RIGHT
 		]);
 
-		this.game.input.onDown.add(function(){
-			console.log('pointer', this.input.activePointer.x, this.input.activePointer.y);
+		game.input.onDown.add(function(){
+			//console.log('pointer', this.input.activePointer.x, this.input.activePointer.y);
 			//console.log('player', player.body.x, player.body.y);
 		}, this);
 
 
 		// presents
-		presents = game.add.group();
-		presents.enableBody = true;
-		for(var i = 0; i < NUM_PRESENTS; i++){
+		this.presents = game.add.group();
+		this.presents.enableBody = true;
+		for(var i = 0; i < myGame.NUM_PRESENTS; i++){
 			this.createRandomPresent();
 		}
 	},
 	update: function(){
 		//update score
-		scoreText.text = "Score: " + score;
-		timerText.text = timerCount.toString();
+		this.scoreText.text = "Score: " + this.score;
+		this.timerText.text = this.timerCount.toString();
 
-		game.physics.arcade.collide(player, platform);
+		game.physics.arcade.collide(this.player, this.platform);
 
-		game.physics.arcade.overlap(platform, presents, this.missPresent, null, this);
-		game.physics.arcade.overlap(player, presents, this.collectPresent, null, this);
+		game.physics.arcade.overlap(this.platform, this.presents, this.missPresent, null, this);
+		game.physics.arcade.overlap(this.player, this.presents, this.collectPresent, null, this);
 
-		player.body.velocity.x = 0;
+		this.player.body.velocity.x = 0;
 
 		if (this.isLeftActive()){
-			player.moveLeft();
+			this.player.moveLeft();
 		} else if (this.isRightActive()){
-			player.moveRight();
+			this.player.moveRight();
 		} else {
-			player.stop();
+			this.player.stop();
 		}
 	},
 	missPresent: function(platform, present){
@@ -155,7 +148,7 @@ mainLoop.prototype = {
 		this.createRandomPresent();
 	},
 	collectPresent: function(player, present){
-		score += 10;
+		this.score += 10;
 		present.kill();
 		this.createRandomPresent();
 	},
@@ -165,24 +158,25 @@ mainLoop.prototype = {
 		present.x = Math.random() * (game.width - present.width);
 	},
 	createPresent: function(x, y){
-		var present = presents.create(x, y, presentTypes[Math.floor(Math.random() * presentTypes.length)]);
+		console.log(this);
+		var present = this.presents.create(x, y, this.presentTypes[Math.floor(Math.random() * this.presentTypes.length)]);
 		present.body.gravity.y = 100;
-		present.body.maxVelocity.setTo(0, MAX_SPEED); //x, y
+		present.body.maxVelocity.setTo(0, myGame.MAX_SPEED); //x, y
 		return present;
 	},
 	isLeftActive: function(){
 		var isActive = false;
 
 		isActive = game.input.keyboard.isDown(Phaser.Keyboard.LEFT);
-		isActive |= this.game.input.activePointer.isDown && this.game.input.activePointer.x + 5 < player.x;
+		isActive |= game.input.activePointer.isDown && game.input.activePointer.x + 5 < this.player.x;
 
 		return isActive;
 	},
 	isRightActive: function(){
 		var isActive = false;
 
-		isActive = this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT);
-		isActive |= this.game.input.activePointer.isDown && game.input.activePointer.x - 5 > player.x;
+		isActive = game.input.keyboard.isDown(Phaser.Keyboard.RIGHT);
+		isActive |= game.input.activePointer.isDown && game.input.activePointer.x - 5 > this.player.x;
 
 		return isActive;
 	}
@@ -195,8 +189,10 @@ finish.prototype = {
 	}
 };
 
-game.state.add('loading', loading, true);
-game.state.add('mainLoop', mainLoop, true);
-game.state.add('finish', finish, true);
+var game = new Phaser.Game(myGame.BASE_WIDTH, myGame.BASE_HEIGHT, Phaser.AUTO, 'game', 'loading', false, false);
+
+game.state.add('loading', myGame.loading, true);
+game.state.add('mainLoop', myGame.mainLoop, true);
+game.state.add('finish', myGame.finish, true);
 
 game.state.start('loading');
