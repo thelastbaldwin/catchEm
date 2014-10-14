@@ -39,9 +39,9 @@ loading.prototype = {
 		this.game.scale.setScreenSize(true);
 	},
 	create: function(){
-		this.startButton = this.add.button(this.game.world.centerX,this.game.world.centerY, 'start_button', this.startGame, this); // x, y, spriteSheet, callback, callbackContext, overFrame, outFrame, downFrame
+		// x, y, spriteSheet, callback, callbackContext, overFrame, outFrame, downFrame
+		this.startButton = this.add.button(this.game.world.centerX,this.game.world.centerY, 'start_button', this.startGame, this);
 		this.startButton.anchor.setTo(0.5, 0.5);
-		// console.log(this.world.width, this.world.height, this.game.width, this.game.height);
 	},
 	update: function(){
 
@@ -118,7 +118,8 @@ mainLoop.prototype = {
 		]);
 
 		this.game.input.onDown.add(function(){
-			console.log(this.input.activePointer.x, this.input.activePointer.y);
+			console.log('pointer', this.input.activePointer.x, this.input.activePointer.y);
+			//console.log('player', player.body.x, player.body.y);
 		}, this);
 
 
@@ -173,7 +174,7 @@ mainLoop.prototype = {
 		var isActive = false;
 
 		isActive = game.input.keyboard.isDown(Phaser.Keyboard.LEFT);
-		isActive |= this.game.input.activePointer.isDown && this.game.input.activePointer.x + 5 < (player.body.x + (player.texture.width)/2);
+		isActive |= this.game.input.activePointer.isDown && this.game.input.activePointer.x + 5 < player.x;
 
 		return isActive;
 	},
@@ -181,7 +182,7 @@ mainLoop.prototype = {
 		var isActive = false;
 
 		isActive = this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT);
-		isActive |= this.game.input.activePointer.isDown && game.input.activePointer.x - 5 > (player.body.x + (player.texture.width)/2);
+		isActive |= this.game.input.activePointer.isDown && game.input.activePointer.x - 5 > player.x;
 
 		return isActive;
 	}
