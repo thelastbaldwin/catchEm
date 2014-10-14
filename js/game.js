@@ -156,9 +156,8 @@ myGame.mainLoop.prototype = {
 	},
 	createRandomCoal: function(){
 		var coal = this.coal.create(0, Math.random() * -1000, 'black_gift');
-		console.log(coal);
 		coal.body.gravity.y = 100;
-		coal.body.maxVelocity.setTo(0, myGame.MAX_SPEED);
+		coal.body.maxVelocity.setTo(0, myGame.MAX_SPEED * 2);
 		coal.x = Math.random() * (this.game.width - coal.width);
 	},
 	createRandomPresent: function(type){
