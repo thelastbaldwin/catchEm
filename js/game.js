@@ -2,7 +2,7 @@ var myGame = {};
 
 myGame.NUM_PRESENTS = 12;
 myGame.NUM_COAL = 3;
-myGame.MAX_SPEED = 150;
+myGame.MAX_SPEED = 125;
 myGame.GOLDEN_RATIO = 1.618;
 myGame.BASE_WIDTH = 400;
 myGame.BASE_HEIGHT = myGame.BASE_WIDTH/myGame.GOLDEN_RATIO;
