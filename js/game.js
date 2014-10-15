@@ -6,19 +6,20 @@ myGame.MAX_SPEED = 125;
 myGame.GOLDEN_RATIO = 1.618;
 myGame.BASE_WIDTH = 400;
 myGame.BASE_HEIGHT = myGame.BASE_WIDTH/myGame.GOLDEN_RATIO;
+myGame.IMAGE_PATH = "http://i.dev.nordstromimage.com/images/default/shop/image/pop-in-shop/2014/1120/"
 myGame.score = 0;
 
 myGame.loading = function(game){};
 myGame.loading.prototype = {
 	preload: function(){
-		this.game.load.image('background', 'img/background.png');
-		this.game.load.image('red_gift', 'img/present_1.png');
-		this.game.load.image('purple_gift', 'img/present_2.png');
-		this.game.load.image('blue_gift', 'img/present_3.png');
-		this.game.load.image('black_gift', 'img/present_4.png');
-		this.game.load.image('ground', 'img/ground.png');
-		this.game.load.spritesheet('dude', 'img/dude.png', 32, 48);
-		this.game.load.image('start_button', 'img/play_button.png');
+		this.game.load.image('background', myGame.IMAGE_PATH + 'background.png');
+		this.game.load.image('red_gift', myGame.IMAGE_PATH + 'present_1.png');
+		this.game.load.image('purple_gift', myGame.IMAGE_PATH + 'present_2.png');
+		this.game.load.image('blue_gift', myGame.IMAGE_PATH + 'present_3.png');
+		this.game.load.image('black_gift', myGame.IMAGE_PATH + 'present_4.png');
+		this.game.load.image('ground', myGame.IMAGE_PATH + 'ground.png');
+		this.game.load.spritesheet('dude', myGame.IMAGE_PATH + 'dude.png', 32, 48);
+		this.game.load.image('start_button', myGame.IMAGE_PATH + 'play_button.png');
 
 		this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 		this.game.scale.maxWidth = myGame.BASE_WIDTH * 2;
@@ -172,7 +173,7 @@ myGame.mainLoop.prototype = {
 	},
 	createRandomPresent: function(type){
 		var present = this.createPresent(0, Math.random() * -1000);
-		//we don't know the width of the present until it's constructed, so adjust after that 
+		//we don't know the width of the present until it's constructed, so adjust after that
 		present.x = Math.random() * (this.game.width - present.width);
 	},
 	createPresent: function(x, y){
@@ -222,8 +223,10 @@ myGame.finish.prototype = {
 
 myGame.game = new Phaser.Game(myGame.BASE_WIDTH, myGame.BASE_HEIGHT, Phaser.CANVAS, 'game', 'loading', false, false);
 
-myGame.game.state.add('loading', myGame.loading, true);
-myGame.game.state.add('mainLoop', myGame.mainLoop, true);
-myGame.game.state.add('finish', myGame.finish, true);
+$(function() {
+	myGame.game.state.add('loading', myGame.loading, true);
+	myGame.game.state.add('mainLoop', myGame.mainLoop, true);
+	myGame.game.state.add('finish', myGame.finish, true);
 
-myGame.game.state.start('loading');
+	myGame.game.state.start('loading');
+});
