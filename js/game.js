@@ -38,14 +38,14 @@ myGame.loading.prototype = {
 		this.game.load.setPreloadSprite(progressBar);
 
 		//load remaining assets
-		this.game.load.image('background', myGame.IMAGE_PATH +  'img/background.png');
-		this.game.load.image('red_gift', myGame.IMAGE_PATH +  'img/present_1.png');
-		this.game.load.image('purple_gift', myGame.IMAGE_PATH +  'img/present_2.png');
-		this.game.load.image('blue_gift', myGame.IMAGE_PATH +  'img/present_3.png');
-		this.game.load.image('black_gift', myGame.IMAGE_PATH +  'img/present_4.png');
-		this.game.load.image('ground', myGame.IMAGE_PATH +  'img/ground.png');
-		this.game.load.spritesheet('dude', myGame.IMAGE_PATH +  'img/dude.png', 32, 48);
-		this.game.load.image('start_button', myGame.IMAGE_PATH +  'img/play_button.png');
+		this.game.load.image('background', 'img/background.png');
+		this.game.load.image('red_gift', 'img/present_1.png');
+		this.game.load.image('purple_gift', 'img/present_2.png');
+		this.game.load.image('blue_gift', 'img/present_3.png');
+		this.game.load.image('black_gift', 'img/present_4.png');
+		this.game.load.image('ground', 'img/ground.png');
+		this.game.load.spritesheet('dude', 'img/dude.png', 32, 48);
+		this.game.load.image('start_button', 'img/play_button.png');
 	},
 	create: function(){
 		this.game.state.start('menu');
