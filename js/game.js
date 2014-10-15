@@ -176,14 +176,14 @@ myGame.mainLoop.prototype = {
 		this.createRandomCoal();
 	},
 	collectPresent: function(player, present){
-		myGame.score += 10;
+		myGame.score += 100;
 		player.collectionTween.start();
 		player.scale.setTo(1);
 		present.kill();
 		this.createRandomPresent();
 	},
 	collectCoal: function(player, coal){
-		myGame.score -= 10;
+		myGame.score -= 100;
 		this.constrainScore();
 		coal.kill();
 		this.createRandomCoal();
@@ -242,11 +242,13 @@ myGame.finish.prototype = {
 		];
 	},
 	create: function(){
-		var fontStyle = { fontSize: '24px', fill: '#fff', align: 'center', wordWrap: true, wordWrapWidth: this.game.width/2 };
+		var fontStyle = { font: '24px Arial', fill: '#fff', align: 'center', wordWrap: true, wordWrapWidth: this.game.width * 0.75 };
 		var expression = this.congratulations[Math.floor(Math.random() * this.congratulations.length)];
-		this.congratulationsText = this.game.add.text(this.game.world.centerX, this.game.world.centerY * 0.5, expression, fontStyle);
+		this.scoreText = this.game.add.text(this.game.world.centerX,this.game.world.centerY * 0.75, 'Score: ' + myGame.score, {font: '24px Arial', fill: '#ffffff'});
+		this.scoreText.anchor.setTo(0.5, 0.5);
+		this.congratulationsText = this.game.add.text(this.game.world.centerX, this.game.world.centerY * 0.25, expression, fontStyle);
 		this.congratulationsText.anchor.setTo(0.5, 0.5);
-		this.startButton = this.add.button(this.game.world.centerX, this.game.world.centerY * 1.5, 'start_button', myGame.loading.prototype.startGame, this);
+		this.startButton = this.add.button(this.game.world.centerX, this.game.world.centerY * 1.5, 'start_button', myGame.menu.prototype.startGame, this);
 		this.startButton.anchor.setTo(0.5, 0.5);
 	}
 };
