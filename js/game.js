@@ -155,10 +155,16 @@ myGame.mainLoop.prototype = {
 		this.createRandomCoal();
 	},
 	createRandomCoal: function(){
-		var coal = this.coal.create(0, Math.random() * -1000, 'black_gift');
+		var coal = this.coal.getFirstDead(),
+			y = Math.random() * -1000,
+			x = Math.random() * (this.game.width - coal.width);
+
+		if(!present){
+			coal = this.coal.create(0, y, 'black_gift');
+		}
+		coal.reset(x, y);
 		coal.body.gravity.y = 100;
 		coal.body.maxVelocity.setTo(0, myGame.MAX_SPEED * 2);
-		coal.x = Math.random() * (this.game.width - coal.width);
 	},
 	createRandomPresent: function(type){
 		var present = this.createPresent(0, Math.random() * -1000);
@@ -166,7 +172,12 @@ myGame.mainLoop.prototype = {
 		present.x = Math.random() * (this.game.width - present.width);
 	},
 	createPresent: function(x, y){
-		var present = this.presents.create(x, y, this.presentTypes[Math.floor(Math.random() * this.presentTypes.length)]);
+		var present = this.presents.getFirstDead();
+
+		if(!present){
+			present = this.presents.create(x, y, this.presentTypes[Math.floor(Math.random() * this.presentTypes.length)]);
+		}
+		present.reset(x, y);
 		present.body.gravity.y = 100;
 		present.body.maxVelocity.setTo(0, myGame.MAX_SPEED); //x, y
 		return present;
