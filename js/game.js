@@ -250,7 +250,7 @@ myGame.finish.prototype = {
 myGame.game = new Phaser.Game(myGame.BASE_WIDTH, myGame.BASE_HEIGHT, Phaser.CANVAS, 'game');
 
 $(function() {
-	myGame.IMAGE_PATH = (window.PageParameters)? window.PageParameters.imageUrl : '';
+	myGame.IMAGE_PATH = (window.PageParameters)? window.PageParameters.imageUrl + 'default/shop/image/pop-in-shop/2014/1120/' : '';
 
 	myGame.game.state.add('boot', myGame.boot, true);
 	myGame.game.state.add('loading', myGame.loading, true);
