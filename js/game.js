@@ -75,7 +75,6 @@ myGame.mainLoop.prototype = {
 
 		// player and settings
 		this.player = this.game.add.sprite(this.game.world.centerX, 0.75 * this.game.world.height, 'dude');
-		this.player.anchor.setTo(0.5, 0.5);
 		this.game.physics.arcade.enable(this.player);
 
 		this.player.body.bounce.y = 0.2;
@@ -84,6 +83,8 @@ myGame.mainLoop.prototype = {
 
 		this.player.animations.add('left', [0, 1, 2, 3], 10, true);
 		this.player.animations.add('right', [5, 6, 7, 8], 10, true);
+
+		this.player.collectionTween = this.game.add.tween(this.player.scale).to({x: 1.3, y: 1.3}, 50).to({x: 1.0, y: 1.0}, 50);
 
 		this.player.moveLeft = function(){
 			this.body.velocity.x = -200;
@@ -145,6 +146,8 @@ myGame.mainLoop.prototype = {
 	},
 	collectPresent: function(player, present){
 		myGame.score += 10;
+		player.collectionTween.start();
+		player.scale.setTo(1);
 		present.kill();
 		this.createRandomPresent();
 	},
@@ -157,11 +160,12 @@ myGame.mainLoop.prototype = {
 	createRandomCoal: function(){
 		var coal = this.coal.getFirstDead(),
 			y = Math.random() * -1000,
-			x = Math.random() * (this.game.width - coal.width);
+			x;
 
-		if(!present){
+		if(!coal){
 			coal = this.coal.create(0, y, 'black_gift');
 		}
+		x = Math.random() * (this.game.width - coal.width)
 		coal.reset(x, y);
 		coal.body.gravity.y = 100;
 		coal.body.maxVelocity.setTo(0, myGame.MAX_SPEED * 2);
@@ -188,12 +192,10 @@ myGame.mainLoop.prototype = {
 		}
 	},
 	isLeftActive: function(){
-		var threshold = 5;
-		return this.game.input.activePointer.x + threshold < this.player.x;
+		return this.game.input.activePointer.isDown && this.game.input.activePointer.x  < this.game.world.width/2;
 	},
 	isRightActive: function(){
-		var threshold = 5;
-		return this.game.input.activePointer.x - threshold > this.player.x;
+		return this.game.input.activePointer.isDown && this.game.input.activePointer.x  > this.game.world.width/2;
 	}
 };
 
