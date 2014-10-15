@@ -11,7 +11,7 @@ myGame.score = 0;
 myGame.boot = function(game){};
 myGame.boot.prototype = {
 	preload: function(){
-		this.game.load.image('progress', 'img/progress.png');
+		this.game.load.image('progress',myGame.IMAGE_PATH + 'img/progress.png');
 
 		this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 		this.game.scale.maxWidth = myGame.BASE_WIDTH * 2;
@@ -38,14 +38,14 @@ myGame.loading.prototype = {
 		this.game.load.setPreloadSprite(progressBar);
 
 		//load remaining assets
-		this.game.load.image('background', 'img/background.png');
-		this.game.load.image('red_gift', 'img/present_1.png');
-		this.game.load.image('purple_gift', 'img/present_2.png');
-		this.game.load.image('blue_gift', 'img/present_3.png');
-		this.game.load.image('black_gift', 'img/present_4.png');
-		this.game.load.image('ground', 'img/ground.png');
-		this.game.load.spritesheet('dude', 'img/dude.png', 32, 48);
-		this.game.load.image('start_button', 'img/play_button.png');
+		this.game.load.image('background', myGame.IMAGE_PATH + 'img/background.png');
+		this.game.load.image('red_gift', myGame.IMAGE_PATH + 'img/present_1.png');
+		this.game.load.image('purple_gift', myGame.IMAGE_PATH + 'img/present_2.png');
+		this.game.load.image('blue_gift', myGame.IMAGE_PATH + 'img/present_3.png');
+		this.game.load.image('black_gift', myGame.IMAGE_PATH + 'img/present_4.png');
+		this.game.load.image('ground', myGame.IMAGE_PATH + 'img/ground.png');
+		this.game.load.spritesheet('dude', myGame.IMAGE_PATH + 'img/dude.png', 32, 48);
+		this.game.load.image('start_button', myGame.IMAGE_PATH + 'img/play_button.png');
 	},
 	create: function(){
 		this.game.state.start('menu');
@@ -140,6 +140,10 @@ myGame.mainLoop.prototype = {
 		for(i = 0; i < myGame.NUM_COAL; i++){
 			this.createRandomCoal();
 		}
+
+		//controls
+		this.cursor = this.game.input.keyboard.createCursorKeys();
+		this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT]);
 	},
 	update: function(){
 		//update score
@@ -219,10 +223,10 @@ myGame.mainLoop.prototype = {
 		}
 	},
 	isLeftActive: function(){
-		return this.game.input.activePointer.isDown && this.game.input.activePointer.x  < this.game.world.width/2;
+		return this.cursor.left.isDown || (this.game.input.activePointer.isDown && this.game.input.activePointer.x  < this.game.world.width/2);
 	},
 	isRightActive: function(){
-		return this.game.input.activePointer.isDown && this.game.input.activePointer.x  > this.game.world.width/2;
+		return this.cursor.right.isDown || (this.game.input.activePointer.isDown && this.game.input.activePointer.x  > this.game.world.width/2);
 	}
 };
 
