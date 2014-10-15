@@ -9,9 +9,36 @@ myGame.BASE_HEIGHT = myGame.BASE_WIDTH/myGame.GOLDEN_RATIO;
 myGame.IMAGE_PATH = "http://i.dev.nordstromimage.com/images/default/shop/image/pop-in-shop/2014/1120/"
 myGame.score = 0;
 
+myGame.boot = function(game){};
+myGame.boot.prototype = {
+	preload: function(){
+		this.game.load.image('progress', 'img/progress.png');
+
+		this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+		this.game.scale.maxWidth = myGame.BASE_WIDTH * 2;
+		this.game.scale.maxHeight = this.game.scale.maxWidth/myGame.GOLDEN_RATIO;
+		this.game.scale.setScreenSize(true);
+	},
+	create: function(){
+		this.game.stage.backgroundColor = '#000000';
+		// We're going to be using physics, so enable the Arcade Physics system
+		this.game.physics.startSystem(Phaser.Physics.ARCADE);
+		this.game.state.start('loading');
+	}
+};
+
 myGame.loading = function(game){};
 myGame.loading.prototype = {
 	preload: function(){
+		var loadingLabel = this.game.add.text(this.game.world.centerX, 150, 'loading...', {font: '30px Arial', fill: '#ffffff'});
+		loadingLabel.anchor.setTo(0.5, 0.5);
+
+		//display the progress bar
+		var progressBar = this.game.add.sprite(this.game.world.centerX, 200, 'progress');
+		progressBar.anchor.setTo(0.5, 0.5);
+		this.game.load.setPreloadSprite(progressBar);
+
+		//load remaining assets
 		this.game.load.image('background', myGame.IMAGE_PATH + 'background.png');
 		this.game.load.image('red_gift', myGame.IMAGE_PATH + 'present_1.png');
 		this.game.load.image('purple_gift', myGame.IMAGE_PATH + 'present_2.png');
@@ -20,12 +47,14 @@ myGame.loading.prototype = {
 		this.game.load.image('ground', myGame.IMAGE_PATH + 'ground.png');
 		this.game.load.spritesheet('dude', myGame.IMAGE_PATH + 'dude.png', 32, 48);
 		this.game.load.image('start_button', myGame.IMAGE_PATH + 'play_button.png');
-
-		this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-		this.game.scale.maxWidth = myGame.BASE_WIDTH * 2;
-		this.game.scale.maxHeight = this.game.scale.maxWidth/myGame.GOLDEN_RATIO;
-		this.game.scale.setScreenSize(true);
 	},
+	create: function(){
+		this.game.state.start('menu');
+	}
+};
+
+myGame.menu = function(game){};
+myGame.menu.prototype = {
 	create: function(){
 		// x, y, spriteSheet, callback, callbackContext, overFrame, outFrame, downFrame
 		this.startButton = this.add.button(this.game.world.centerX, this.game.world.centerY, 'start_button', this.startGame, this);
@@ -46,8 +75,6 @@ myGame.mainLoop.prototype = {
 		];
 	},
 	create: function(){
-		// We're going to be using physics, so enable the Arcade Physics system
-		this.game.physics.startSystem(Phaser.Physics.ARCADE);
 		var background = this.game.add.sprite(0, 0, 'background');
 		background.inputEnabled = true;
 
@@ -166,7 +193,7 @@ myGame.mainLoop.prototype = {
 		if(!coal){
 			coal = this.coal.create(0, y, 'black_gift');
 		}
-		x = Math.random() * (this.game.width - coal.width)
+		x = Math.random() * (this.game.width - coal.width);
 		coal.reset(x, y);
 		coal.body.gravity.y = 100;
 		coal.body.maxVelocity.setTo(0, myGame.MAX_SPEED * 2);
@@ -224,9 +251,11 @@ myGame.finish.prototype = {
 myGame.game = new Phaser.Game(myGame.BASE_WIDTH, myGame.BASE_HEIGHT, Phaser.CANVAS, 'game', 'loading', false, false);
 
 $(function() {
+	myGame.game.state.add('boot', myGame.boot, true);
 	myGame.game.state.add('loading', myGame.loading, true);
+	myGame.game.state.add('menu', myGame.menu, true);
 	myGame.game.state.add('mainLoop', myGame.mainLoop, true);
 	myGame.game.state.add('finish', myGame.finish, true);
 
-	myGame.game.state.start('loading');
+	myGame.game.state.start('boot');
 });
