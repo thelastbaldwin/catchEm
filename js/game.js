@@ -44,7 +44,7 @@ myGame.loading.prototype = {
 		this.game.load.image('blue_gift', myGame.IMAGE_PATH + 'img/present_3.png');
 		this.game.load.image('black_gift', myGame.IMAGE_PATH + 'img/present_4.png');
 		this.game.load.image('ground', myGame.IMAGE_PATH + 'img/ground.png');
-		this.game.load.spritesheet('dude', myGame.IMAGE_PATH + 'img/dude.png', 32, 48);
+		this.game.load.spritesheet('dude', myGame.IMAGE_PATH + 'img/dude.png', 32, 41);
 		this.game.load.spritesheet('mute', myGame.IMAGE_PATH + 'img/mute_button.png', 20, 20);
 		this.game.load.image('start_button', myGame.IMAGE_PATH + 'img/play_button.png');
 		this.game.load.audio('present', [myGame.IMAGE_PATH + 'sound/pickup.mp3', myGame.IMAGE_PATH + 'sound/pickup.ogg']);
@@ -106,7 +106,6 @@ myGame.mainLoop.prototype = {
 		// player and settings
 		this.player = this.game.add.sprite(this.game.world.centerX, 0.75 * this.game.world.height, 'dude');
 		this.game.physics.arcade.enable(this.player);
-
 		this.player.body.bounce.y = 0.2;
 		this.player.body.gravity.y = 300;
 		this.player.body.collideWorldBounds = true;
