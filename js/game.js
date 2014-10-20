@@ -14,7 +14,7 @@ myGame.boot.prototype = {
 		this.game.load.image('progress',myGame.IMAGE_PATH + 'img/progress.png');
 
 		this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-		this.game.scale.maxWidth = myGame.BASE_WIDTH * 2;
+		this.game.scale.maxWidth = 1170;
 		this.game.scale.maxHeight = this.game.scale.maxWidth/myGame.GOLDEN_RATIO;
 		this.game.scale.setScreenSize(true);
 	},
@@ -100,7 +100,6 @@ myGame.mainLoop.prototype = {
 		this.platform = this.game.add.group();
 		this.platform.enableBody = true;
 		var ground = this.platform.create(0, this.game.height, 'ground');
-		ground.anchor.setTo(0, 1.0);
 		ground.body.immovable = true;
 
 		// player and settings
