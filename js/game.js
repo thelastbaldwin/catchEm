@@ -12,6 +12,7 @@ myGame.boot = function(game){};
 myGame.boot.prototype = {
 	preload: function(){
 		this.game.load.image('progress',myGame.IMAGE_PATH + 'img/progress.png');
+		this.game.load.image('menu_background',myGame.IMAGE_PATH + 'img/menu_background.png');
 
 		this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 		this.game.scale.maxWidth = 1170;
@@ -19,8 +20,7 @@ myGame.boot.prototype = {
 		this.game.scale.setScreenSize(true);
 	},
 	create: function(){
-		this.game.stage.backgroundColor = '#000000';
-		// We're going to be using physics, so enable the Arcade Physics system
+		this.game.stage.backgroundColor = '#0185a1';
 		this.game.physics.startSystem(Phaser.Physics.ARCADE);
 		this.game.state.start('loading');
 	}
@@ -29,11 +29,11 @@ myGame.boot.prototype = {
 myGame.loading = function(game){};
 myGame.loading.prototype = {
 	preload: function(){
-		var loadingLabel = this.game.add.text(this.game.world.centerX, 150, 'loading...', {font: '30px Arial', fill: '#ffffff'});
+		var loadingLabel = this.game.add.text(this.game.world.centerX, 150, 'loading...', {font: '30px \'Press Start 2P\'', fill: '#ffffff'});
 		loadingLabel.anchor.setTo(0.5, 0.5);
 
 		//display the progress bar
-		var progressBar = this.game.add.sprite(this.game.world.centerX, 200, 'progress');
+		var progressBar = this.game.add.sprite(this.game.world.centerX, this.game.world.height * 0.75, 'progress');
 		progressBar.anchor.setTo(0.5, 0.5);
 		this.game.load.setPreloadSprite(progressBar);
 
@@ -42,7 +42,7 @@ myGame.loading.prototype = {
 		this.game.load.image('red_gift', myGame.IMAGE_PATH + 'img/present_1.png');
 		this.game.load.image('purple_gift', myGame.IMAGE_PATH + 'img/present_2.png');
 		this.game.load.image('blue_gift', myGame.IMAGE_PATH + 'img/present_3.png');
-		this.game.load.image('black_gift', myGame.IMAGE_PATH + 'img/present_4.png');
+		this.game.load.image('coal', myGame.IMAGE_PATH + 'img/coal.png');
 		this.game.load.image('ground', myGame.IMAGE_PATH + 'img/ground.png');
 		this.game.load.spritesheet('dude', myGame.IMAGE_PATH + 'img/dude.png', 32, 41);
 		this.game.load.spritesheet('mute', myGame.IMAGE_PATH + 'img/mute_button.png', 20, 20);
@@ -51,6 +51,7 @@ myGame.loading.prototype = {
 		this.game.load.audio('coal', [myGame.IMAGE_PATH + 'sound/coal.mp3', myGame.IMAGE_PATH + 'sound/coal.ogg']);
 	},
 	create: function(){
+		var background = this.game.add.sprite(0, 0, 'menu_background');
 		this.game.state.start('menu');
 	}
 };
@@ -58,8 +59,10 @@ myGame.loading.prototype = {
 myGame.menu = function(game){};
 myGame.menu.prototype = {
 	create: function(){
+		var background = this.game.add.sprite(0, 0, 'menu_background');
+
 		// x, y, spriteSheet, callback, callbackContext, overFrame, outFrame, downFrame
-		this.startButton = this.add.button(this.game.world.centerX, this.game.world.centerY, 'start_button', this.startGame, this);
+		this.startButton = this.add.button(this.game.world.centerX, this.game.world.height * 0.75, 'start_button', this.startGame, this);
 		this.startButton.anchor.setTo(0.5, 0.5);
 	},
 	startGame: function(){
@@ -82,8 +85,9 @@ myGame.mainLoop.prototype = {
 
 		this.timerCount = 60;
 		myGame.score = 0;
-		var fontStyle = { fontSize: '32px', fill: '#fff' };
+		var fontStyle = { font: '20px \'Press Start 2P\'', fill: '#fff' };
 		this.scoreText = this.game.add.text(16, 16, 'Score: ' + myGame.score.toString(), fontStyle);
+		console.log(this.scoreText);
 		this.timerText = this.game.add.text(this.game.width-16, 16, this.timerCount.toString(), fontStyle);
 		this.timerText.anchor.setTo(1.0, 0);
 
@@ -205,7 +209,7 @@ myGame.mainLoop.prototype = {
 			x;
 
 		if(!coal){
-			coal = this.coal.create(0, y, 'black_gift');
+			coal = this.coal.create(0, y, 'coal');
 		}
 		x = Math.random() * (this.game.width - coal.width);
 		coal.reset(x, y);
@@ -257,12 +261,12 @@ myGame.finish.prototype = {
 		];
 	},
 	create: function(){
-		var fontStyle = { font: '24px Arial', fill: '#fff', align: 'center', wordWrap: true, wordWrapWidth: this.game.width * 0.75 };
+		var fontStyle = { font: '24px \'Press Start 2P\'', fill: '#fff', align: 'center', wordWrap: true, wordWrapWidth: this.game.width * 0.75 };
 		var expression = this.congratulations[Math.floor(Math.random() * this.congratulations.length)];
-		this.scoreText = this.game.add.text(this.game.world.centerX,this.game.world.centerY * 0.75, 'Score: ' + myGame.score, {font: '24px Arial', fill: '#ffffff'});
+		this.scoreText = this.game.add.text(this.game.world.centerX,this.game.world.height * 0.60, 'Score: ' + myGame.score, {font: '24px \'Press Start 2P\'', fill: '#ffffff'});
 		this.scoreText.anchor.setTo(0.5, 0.5);
-		this.congratulationsText = this.game.add.text(this.game.world.centerX, this.game.world.centerY * 0.25, expression, fontStyle);
-		this.congratulationsText.anchor.setTo(0.5, 0.5);
+		this.congratulationsText = this.game.add.text(this.game.world.centerX, this.game.world.height * 0.10, expression, fontStyle);
+		this.congratulationsText.anchor.setTo(0.5, 0.0);
 		this.startButton = this.add.button(this.game.world.centerX, this.game.world.centerY * 1.5, 'start_button', myGame.menu.prototype.startGame, this);
 		this.startButton.anchor.setTo(0.5, 0.5);
 	}
