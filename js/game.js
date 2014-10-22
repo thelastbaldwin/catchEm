@@ -39,6 +39,7 @@ myGame.loading.prototype = {
 
 		//load remaining assets
 		this.game.load.image('background', myGame.IMAGE_PATH + 'img/background.png');
+		this.game.load.image('finish_background', myGame.IMAGE_PATH + 'img/finish_background.png');
 		this.game.load.image('red_gift', myGame.IMAGE_PATH + 'img/present_1.png');
 		this.game.load.image('purple_gift', myGame.IMAGE_PATH + 'img/present_2.png');
 		this.game.load.image('blue_gift', myGame.IMAGE_PATH + 'img/present_3.png');
@@ -86,10 +87,10 @@ myGame.mainLoop.prototype = {
 
 		this.timerCount = 60;
 		myGame.score = 0;
-		var fontStyle = { font: '20px \'Press Start 2P\'', fill: '#fff' };
-		this.scoreText = this.game.add.text(16, 16, 'Score: ' + myGame.score.toString(), fontStyle);
-		this.timerText = this.game.add.text(this.game.width-16, 16, this.timerCount.toString(), fontStyle);
-		this.timerText.anchor.setTo(1.0, 0);
+		var fontStyle = { font: '16px \'Press Start 2P\'', fill: '#fff' };
+		this.scoreText = this.game.add.text(this.game.width-24, 24, myGame.score.toString(), fontStyle);
+		this.scoreText.anchor.setTo(1.0, 0);
+		this.timerText = this.game.add.text(55, 24, this.timerCount.toString(), fontStyle);
 
 		this.timer = this.game.time.create(false);
 		var interval = this.timer.loop(1000, function(){
@@ -160,7 +161,7 @@ myGame.mainLoop.prototype = {
 	},
 	update: function(){
 		//update score
-		this.scoreText.text = "Score: " + myGame.score;
+		this.scoreText.text = myGame.score.toString();
 		this.timerText.text = this.timerCount.toString();
 
 		this.game.physics.arcade.collide(this.player, this.platform);
@@ -261,13 +262,14 @@ myGame.finish.prototype = {
 		];
 	},
 	create: function(){
-		var fontStyle = { font: '24px \'Press Start 2P\'', fill: '#fff', align: 'center', wordWrap: true, wordWrapWidth: this.game.width * 0.75 };
+		var background = this.game.add.sprite(0, 0, 'finish_background');
+		var fontStyle = { font: '18px \'Press Start 2P\'', fill: '#fff', align: 'center', wordWrap: true, wordWrapWidth: this.game.width * 0.50 };
 		var expression = this.congratulations[Math.floor(Math.random() * this.congratulations.length)];
-		this.scoreText = this.game.add.text(this.game.world.centerX,this.game.world.height * 0.60, 'Score: ' + myGame.score, {font: '24px \'Press Start 2P\'', fill: '#ffffff'});
+		this.scoreText = this.game.add.text(this.game.world.centerX,this.game.world.height * 0.60, 'Score: ' + myGame.score, {font: '18px \'Press Start 2P\'', fill: '#ffffff'});
 		this.scoreText.anchor.setTo(0.5, 0.5);
-		this.congratulationsText = this.game.add.text(this.game.world.centerX, this.game.world.height * 0.10, expression, fontStyle);
+		this.congratulationsText = this.game.add.text(this.game.world.centerX, this.game.world.height * 0.20, expression, fontStyle);
 		this.congratulationsText.anchor.setTo(0.5, 0.0);
-		this.startButton = this.add.button(this.game.world.centerX, this.game.world.centerY * 1.5, 'play_again_button', myGame.menu.prototype.startGame, this);
+		this.startButton = this.add.button(this.game.world.centerX, this.game.world.height * 0.85, 'play_again_button', myGame.menu.prototype.startGame, this);
 		this.startButton.anchor.setTo(0.5, 0.5);
 	}
 };
