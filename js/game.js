@@ -47,6 +47,7 @@ myGame.loading.prototype = {
 		this.game.load.spritesheet('dude', myGame.IMAGE_PATH + 'img/dude.png', 32, 41);
 		this.game.load.spritesheet('mute', myGame.IMAGE_PATH + 'img/mute_button.png', 20, 20);
 		this.game.load.image('start_button', myGame.IMAGE_PATH + 'img/play_button.png');
+		this.game.load.image('play_again_button', myGame.IMAGE_PATH + 'img/play_again.png');
 		this.game.load.audio('present', [myGame.IMAGE_PATH + 'sound/pickup.mp3', myGame.IMAGE_PATH + 'sound/pickup.ogg']);
 		this.game.load.audio('coal', [myGame.IMAGE_PATH + 'sound/coal.mp3', myGame.IMAGE_PATH + 'sound/coal.ogg']);
 	},
@@ -87,7 +88,6 @@ myGame.mainLoop.prototype = {
 		myGame.score = 0;
 		var fontStyle = { font: '20px \'Press Start 2P\'', fill: '#fff' };
 		this.scoreText = this.game.add.text(16, 16, 'Score: ' + myGame.score.toString(), fontStyle);
-		console.log(this.scoreText);
 		this.timerText = this.game.add.text(this.game.width-16, 16, this.timerCount.toString(), fontStyle);
 		this.timerText.anchor.setTo(1.0, 0);
 
@@ -267,7 +267,7 @@ myGame.finish.prototype = {
 		this.scoreText.anchor.setTo(0.5, 0.5);
 		this.congratulationsText = this.game.add.text(this.game.world.centerX, this.game.world.height * 0.10, expression, fontStyle);
 		this.congratulationsText.anchor.setTo(0.5, 0.0);
-		this.startButton = this.add.button(this.game.world.centerX, this.game.world.centerY * 1.5, 'start_button', myGame.menu.prototype.startGame, this);
+		this.startButton = this.add.button(this.game.world.centerX, this.game.world.centerY * 1.5, 'play_again_button', myGame.menu.prototype.startGame, this);
 		this.startButton.anchor.setTo(0.5, 0.5);
 	}
 };
