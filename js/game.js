@@ -90,7 +90,7 @@ myGame.mainLoop.prototype = {
 		var fontStyle = { font: '16px \'Press Start 2P\'', fill: '#fff' };
 		this.scoreText = this.game.add.text(this.game.width-24, 24, myGame.score.toString(), fontStyle);
 		this.scoreText.anchor.setTo(1.0, 0);
-		this.timerText = this.game.add.text(55, 24, this.timerCount.toString(), fontStyle);
+		this.timerText = this.game.add.text(35, 24, this.formatTime(this.timerCount), fontStyle);
 
 		this.timer = this.game.time.create(false);
 		var interval = this.timer.loop(1000, function(){
@@ -162,7 +162,7 @@ myGame.mainLoop.prototype = {
 	update: function(){
 		//update score
 		this.scoreText.text = myGame.score.toString();
-		this.timerText.text = this.timerCount.toString();
+		this.timerText.text = this.formatTime(this.timerCount);
 
 		this.game.physics.arcade.collide(this.player, this.platform);
 
@@ -247,6 +247,11 @@ myGame.mainLoop.prototype = {
 	toggleSound: function(){
 		this.game.sound.mute = !this.game.sound.mute;
 		this.muteButton.frame = this.game.sound.mute ? 0 : 1;
+	},
+	formatTime: function(timeInSeconds){
+		var minutes = Math.floor(timeInSeconds/60);
+		var seconds = ("0" + (timeInSeconds % 60)).slice(-2);
+		return minutes.toString() + ":" + seconds;
 	}
 };
 
@@ -274,7 +279,7 @@ myGame.finish.prototype = {
 	}
 };
 
-myGame.game = new Phaser.Game(myGame.BASE_WIDTH, myGame.BASE_HEIGHT, Phaser.CANVAS, 'game');
+myGame.game = new Phaser.Game(myGame.BASE_WIDTH, myGame.BASE_HEIGHT, Phaser.CANVAS, 'game', null, false, false);
 
 $(function() {
 	myGame.IMAGE_PATH = (window.PageParameters)? window.PageParameters.imageUrl + 'default/shop/image/pop-in-shop/2014/1120/' : '';
