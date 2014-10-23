@@ -118,6 +118,7 @@ myGame.mainLoop.prototype = {
 		this.player.animations.add('right', [5, 6, 7, 8], 10, true);
 
 		this.player.collectionTween = this.game.add.tween(this.player.scale).to({x: 1.3, y: 1.3}, 50).to({x: 1.0, y: 1.0}, 50);
+		this.player.collectCoalTween = this.game.add.tween(this.player).to({tint: 0xff4f3d}, 100).to({tint: 0xffffff}, 100);
 
 		this.player.moveLeft = function(){
 			this.body.velocity.x = -200;
@@ -203,6 +204,7 @@ myGame.mainLoop.prototype = {
 		this.constrainScore();
 		coal.kill();
 		this.createRandomCoal();
+		player.collectCoalTween.start().repeat(3);
 	},
 	createRandomCoal: function(){
 		var coal = this.coal.getFirstDead(),
