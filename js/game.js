@@ -46,11 +46,8 @@ myGame.loading.prototype = {
 		this.game.load.image('coal', myGame.IMAGE_PATH + 'img/coal.png');
 		this.game.load.image('ground', myGame.IMAGE_PATH + 'img/ground.png');
 		this.game.load.spritesheet('dude', myGame.IMAGE_PATH + 'img/dude.png', 32, 41);
-		this.game.load.spritesheet('mute', myGame.IMAGE_PATH + 'img/mute_button.png', 20, 20);
 		this.game.load.image('start_button', myGame.IMAGE_PATH + 'img/play_button.png');
 		this.game.load.image('play_again_button', myGame.IMAGE_PATH + 'img/play_again.png');
-		this.game.load.audio('present', [myGame.IMAGE_PATH + 'sound/pickup.mp3', myGame.IMAGE_PATH + 'sound/pickup.ogg']);
-		this.game.load.audio('coal', [myGame.IMAGE_PATH + 'sound/coal.mp3', myGame.IMAGE_PATH + 'sound/coal.ogg']);
 	},
 	create: function(){
 		var background = this.game.add.sprite(0, 0, 'menu_background');
@@ -151,14 +148,6 @@ myGame.mainLoop.prototype = {
 		//controls
 		this.cursor = this.game.input.keyboard.createCursorKeys();
 		this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT]);
-
-		//sounds
-		this.presentSound = this.game.add.audio('present');
-		this.coalSound = this.game.add.audio('coal');
-
-		this.muteButton = this.game.add.button(16, 50, 'mute', this.toggleSound, this);
-		this.game.sound.mute = true;
-		this.muteButton.frame = 0;
 	},
 	update: function(){
 		//update score
@@ -191,7 +180,6 @@ myGame.mainLoop.prototype = {
 		this.createRandomCoal();
 	},
 	collectPresent: function(player, present){
-		this.presentSound.play();
 		myGame.score += 100;
 		player.collectionTween.start();
 		player.scale.setTo(1);
@@ -199,7 +187,6 @@ myGame.mainLoop.prototype = {
 		this.createRandomPresent();
 	},
 	collectCoal: function(player, coal){
-		this.coalSound.play();
 		myGame.score -= 100;
 		this.constrainScore();
 		coal.kill();
