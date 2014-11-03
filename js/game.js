@@ -49,6 +49,7 @@ $(function(Phaser) {
 			this.game.load.spritesheet('dude', myGame.IMAGE_PATH + 'img/dude.png', 32, 41);
 			this.game.load.image('start_button', myGame.IMAGE_PATH + 'img/play_button.png');
 			this.game.load.image('play_again_button', myGame.IMAGE_PATH + 'img/play_again.png');
+			this.game.load.image('shop_button', myGame.IMAGE_PATH + 'img/shop_button.png');
 		},
 		create: function(){
 			var background = this.game.add.sprite(0, 0, 'menu_background');
@@ -62,8 +63,18 @@ $(function(Phaser) {
 			var background = this.game.add.sprite(0, 0, 'menu_background');
 
 			// x, y, spriteSheet, callback, callbackContext, overFrame, outFrame, downFrame
-			this.startButton = this.add.button(this.game.world.centerX, this.game.world.height * 0.75, 'start_button', this.startGame, this);
+			this.startButton = this.add.button(120, this.game.world.height * 0.75, 'start_button', this.startGame, this);
 			this.startButton.anchor.setTo(0.5, 0.5);
+
+			this.shopButton = this.add.button(284, this.game.world.height * 0.75, 'shop_button', this.shopScroll, this);
+			this.shopButton.anchor.setTo(0.5, 0.5);
+		},
+		shopScroll: function() {
+			$('body, html').animate({
+					scrollTop: $('#dynamicFilter').offset().top
+				}, {
+					duration: 600
+				});
 		},
 		startGame: function(){
 			this.game.state.start('mainLoop');
@@ -264,8 +275,11 @@ $(function(Phaser) {
 			this.scoreText.anchor.setTo(0.5, 0.5);
 			this.congratulationsText = this.game.add.text(this.game.world.centerX, this.game.world.height * 0.20, expression, fontStyle);
 			this.congratulationsText.anchor.setTo(0.5, 0.0);
-			this.startButton = this.add.button(this.game.world.centerX, this.game.world.height * 0.85, 'play_again_button', myGame.menu.prototype.startGame, this);
+			this.startButton = this.add.button(this.game.world.centerX, this.game.world.height * 0.76, 'play_again_button', myGame.menu.prototype.startGame, this);
 			this.startButton.anchor.setTo(0.5, 0.5);
+
+			this.shopButton = this.add.button(this.game.world.centerX, this.game.world.height * 0.90, 'shop_button', myGame.menu.prototype.shopScroll, this);
+			this.shopButton.anchor.setTo(0.5, 0.5);
 		}
 	};
 
