@@ -5,7 +5,7 @@ $(function(Phaser) {
 	myGame.NUM_COAL = 3;
 	myGame.MAX_SPEED = 125;
 	myGame.GOLDEN_RATIO = 1.618;
-	myGame.BASE_WIDTH = 400;
+	myGame.BASE_WIDTH = 730;
 	myGame.BASE_HEIGHT = myGame.BASE_WIDTH/myGame.GOLDEN_RATIO;
 	myGame.score = 0;
 
@@ -15,11 +15,9 @@ $(function(Phaser) {
 			this.game.load.image('progress',myGame.IMAGE_PATH + 'img/progress.png');
 			this.game.load.image('menu_background',myGame.IMAGE_PATH + 'img/menu_background.png');
 
-			this.game.scale.scaleMode = Phaser.ScaleManager.NO_SCALE;
-			this.game.scale.width = myGame.BASE_WIDTH;
-			this.game.scale.height = myGame.BASE_HEIGHT;
-			// this.game.scale.maxWidth = 1170;
-			// this.game.scale.maxHeight = this.game.scale.maxWidth/myGame.GOLDEN_RATIO;
+			this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+			this.game.scale.maxWidth = 730;
+			this.game.scale.maxHeight = this.game.scale.maxWidth/myGame.GOLDEN_RATIO;
 			this.game.scale.setScreenSize(true);
 		},
 		create: function(){
